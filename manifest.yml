@@ -1,7 +1,7 @@
 ---
 applications:
 - buildpack: https://github.com/cloudfoundry/staticfile-buildpack.git
-  host: helloworld-html-${random-word}
-  name: helloworld-html
+  host: click-wars
+  name: click-wars
   memory: 64M
   stack: cflinuxfs2

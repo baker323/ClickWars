@@ -2,7 +2,117 @@
 	<head>
 		<title>Click Wars</title>
 		<style>
-			img{
+			* { margin:0; padding:0; }
+			html, body { width:100%; height:100%; }
+			canvas { display:block; }
+			body {
+				margin: 0;
+				font-family: 'Lato', sans-serif;
+			}
+			h1 {
+				-webkit-user-select: none; /* Chrome/Safari */        
+				-moz-user-select: none; /* Firefox */
+				-ms-user-select: none; /* IE10+ */
+				-o-user-select: none;
+				user-select: none;
+			}
+			h1:hover {
+				cursor: default;
+			}
+			.overlay {
+				height: 0%;
+				width: 100%;
+				position: fixed;
+				z-index: 1;
+				top: 0;
+				left: 0;
+				background-color: rgb(0,0,0);
+				background-color: rgba(0,0,0, 0.9);
+				overflow-y: hidden;
+				transition: 0.5s;
+				user-drag: none; 
+				user-select: none;
+				-moz-user-select: none;
+				-webkit-user-drag: none;
+				-webkit-user-select: none;
+				-ms-user-select: none;
+			}
+
+			.overlay-content {
+				position: relative;
+				top: 25%;
+				width: 100%;
+				text-align: center;
+				margin-top: 30px;
+				user-drag: none; 
+				user-select: none;
+				-moz-user-select: none;
+				-webkit-user-drag: none;
+				-webkit-user-select: none;
+				-ms-user-select: none;
+			}
+
+			.overlay a {
+				padding: 8px;
+				text-decoration: none;
+				font-size: 36px;
+				color: #818181;
+				display: block;
+				transition: 0.3s;
+				-webkit-user-select: none; /* Chrome/Safari */        
+				-moz-user-select: none; /* Firefox */
+				-ms-user-select: none; /* IE10+ */
+				-o-user-select: none;
+				user-select: none;
+				user-drag: none; 
+				user-select: none;
+				-moz-user-select: none;
+				-webkit-user-drag: none;
+				-webkit-user-select: none;
+				-ms-user-select: none;
+			}
+
+			.overlay a:hover, .overlay a:focus {
+				color: #f1f1f1;
+			}
+
+			.closebtn {
+				position: absolute;
+				top: 20px;
+				right: 45px;
+				font-size: 60px !important;
+				-webkit-user-select: none; /* Chrome/Safari */        
+				-moz-user-select: none; /* Firefox */
+				-ms-user-select: none; /* IE10+ */
+				-o-user-select: none;
+				user-select: none;
+			}
+
+			@media screen and (max-height: 450px) {
+			  .overlay {overflow-y: auto;}
+			  .overlay a {font-size: 20px}
+			  .closebtn {
+				font-size: 40px !important;
+				top: 15px;
+				right: 35px;
+			  }
+			}
+			body {
+				position: fixed; 
+				overflow-y: scroll;
+				overflow:hidden;
+				width: 100%;
+			}
+			img {
+				user-drag: none; 
+				user-select: none;
+				-moz-user-select: none;
+				-webkit-user-drag: none;
+				-webkit-user-select: none;
+				-ms-user-select: none;
+			}
+			img.center {
+				pointer-events: none;
 			    position: absolute;
 			    margin: auto;
 			    top: 0;
@@ -10,12 +120,349 @@
 			    right: 0;
 			    bottom: 0;
 			}
+			img.corner {
+			    cursor: pointer;
+			}
 		</style>
 	</head>
      <body bgcolor="#000000">
-          	<img src="/clickwars.png">
-          	<img src="/clickwars.png">
-          	<p style="color: #2C9DA3; font-family: Franklin Gothic, Arial, Serif;">Coming soon to a galaxy near you. . . .</p>
-          	<audio src="/epic.mp3" autoplay loop>
+		 	<!-- <p style="color: #2C9DA3; font-family: Franklin Gothic, Arial, Serif; text-align: center">Coming soon to a galaxy near you. . . .</p> -->
+		 
+		 	<canvas id="canvas"></canvas>
+          	<img class="corner" id="tl" src="/clickwars.png" style="position: absolute; left: 0; top: 0;" onclick="topLeft()">
+		 	<img class="corner" id="bl" src="/clickwars.png" style="position: absolute; left: 0; bottom: 0;" onclick="bottomLeft()">
+		 	<img class="corner" id="tr" src="/clickwars.png" style="position: absolute; right: 0; top: 0;" onclick="topRight()">
+		 	<img class="corner" id="br" src="/clickwars.png" style="position: absolute; right: 0; bottom: 0;" onclick="bottomRight()">
+		 	
+		 	<p id="1" style="color: #FFFFFF; position: absolute; left: 0; top: 0;"></p>
+		 	<p id="2" style="color: #FFFFFF; position: absolute; left: 0; bottom: 0;"></p>
+		 	<p id="3" style="color: #FFFFFF; position: absolute; right: 0; top: 0;"></p>
+		 	<p id="4" style="color: #FFFFFF; position: absolute; right: 0; bottom: 0;"></p>
+		 	
+		 	<img src="/favicon.ico" class="center" id="center">
+		 	
+		 	
+		 	<div id="myNav" class="overlay">
+				<audio id="music" src="/epic.mp3" autoplay loop></audio>
+			  <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">×</a>
+			  <div style="color: #FFFFFF" class="overlay-content"><img src="/clickwars.png">
+				<p style="color: #2C9DA3">Music: www.bensound.com</p>
+				<a href="#" onclick="closeNav()">Play</a>
+				<a href="#" onclick="uploadImage()">Upload Image</a>
+			  </div>
+			</div>
+		 
+		 	<div id="myNav2" class="overlay">
+			  <a href="javascript:void(0)" class="closebtn" onclick="closeNav2()">×</a>
+			  <div style="color: #FFFFFF" class="overlay-content">
+				  <h1 id="winner" style="color: #2C9DA3"></h1>
+				  <img src="/clickwars.png">
+				<a href="#" onclick="closeNav2()">Play Again</a>
+				<a href="#" onclick="uploadImage2()">Upload Image</a>
+			  </div>
+			</div>
+		 
+		 	<script>
+				var interval = 0;
+				window.onload = openNav();
+				function openNav() {
+					document.getElementById("myNav").style.height = "100%";
+				}
+				
+				function openNav2() {
+					document.getElementById("myNav2").style.height = "100%";
+					clearInterval(interval);
+				}
+				
+				function closeNav2() {
+					document.getElementById("myNav2").style.height = "0%";
+					document.getElementById("music").pause();
+					document.getElementById("music").loop = true;
+					document.getElementById("music").src = "/funky.mp3";
+					tlClicks = 1;
+					blClicks = 1;
+					trClicks = 1;
+					brClicks = 1;
+					i = 1; // increment center right and left
+					j = 1;	// increment center up and down
+					w = 1; // width offset
+					h = 1; // height offset
+					adjustPics();
+					interval = setInterval(reset, 60000);
+					setInterval(redrawImages, 1);
+				}
+
+				function closeNav() {
+					document.getElementById("myNav").style.height = "0%";
+					document.getElementById("music").pause();
+					document.getElementById("music").loop = true;
+					document.getElementById("music").src = "/funky.mp3";
+					interval = setInterval(reset, 60000);
+					setInterval(redrawImages, 1);
+				}
+				
+				canvas.onselectstart = function () { return false; }
+				var tlClicks = 1;
+				var blClicks = 1;
+				var trClicks = 1;
+				var brClicks = 1;
+				var i = 1; // increment center right and left
+				var j = 1;	// increment center up and down
+				var w = 1; // width offset
+				var h = 1; // height offset
+				var incH = 10; // vertical movement offset
+				var incW = (incH * window.innerWidth)/(window.innerHeight); // horizontal movement offset
+				
+		 		function numClicks() {
+					return tlClicks + blClicks + trClicks + brClicks;
+				}
+				function topLeft() { // All Positive
+					tlClicks++;
+					//console.log(tlClicks);
+					adjustPics();
+						i = i-incW;
+						j = j-incH;
+						w = w+incW;
+						h = h+incH;
+					//redrawImages();
+					//document.getElementById("center").style["right"] = i;
+					//document.getElementById("center").style["bottom"] = j;
+				}
+				function bottomLeft() { // Positve / Negative
+					blClicks++;
+					//console.log(blClicks);
+					adjustPics();
+						i = i-incW;
+						j = j+incH;
+						w = w+incW;
+						h = h-incH;
+					//redrawImages();
+					//document.getElementById("center").style["right"] = i;
+					//document.getElementById("center").style["bottom"] = j;
+				}
+				function topRight() { // Positive / Negative
+					trClicks++;
+					//console.log(trClicks);
+					adjustPics();
+						i = i+incW;
+						j = j-incH;
+						w = w-incW;
+						h = h+incH;
+					//redrawImages();
+					//document.getElementById("center").style["right"] = i;
+					//document.getElementById("center").style["bottom"] = j;
+				}
+				function bottomRight() { // All Negative
+					brClicks++;
+					//console.log(brClicks);
+					adjustPics();
+						i = i+incW;
+						j = j+incH;
+						w = w-incW;
+						h = h-incH;
+					//redrawImages();
+					//document.getElementById("center").style["right"] = i;
+					//document.getElementById("center").style["bottom"] = j;
+				}
+				function redrawImages() {
+					if (window.innerWidth < 1000) {
+						document.getElementById('tl').height = window.innerHeight/4;
+						document.getElementById('tl').width = window.innerWidth/4;
+						document.getElementById('tr').height = window.innerHeight/4;
+						document.getElementById('tr').width = window.innerWidth/4;
+						document.getElementById('bl').height = window.innerHeight/4;
+						document.getElementById('bl').width = window.innerWidth/4;
+						document.getElementById('br').height = window.innerHeight/4;
+						document.getElementById('br').width = window.innerWidth/4;
+					} else {
+						document.getElementById('tl').height = window.innerHeight/6;
+						document.getElementById('tl').width = window.innerWidth/6;
+						document.getElementById('tr').height = window.innerHeight/6;
+						document.getElementById('tr').width = window.innerWidth/6;
+						document.getElementById('bl').height = window.innerHeight/6;
+						document.getElementById('bl').width = window.innerWidth/6;
+						document.getElementById('br').height = window.innerHeight/6;
+						document.getElementById('br').width = window.innerWidth/6;
+					}
+					
+					var a = document.getElementById("1");
+					var b = document.getElementById("2");
+					var c = document.getElementById("3");
+					var d = document.getElementById("4");
+					a.innerHTML = tlClicks-1;
+					b.innerHTML = blClicks-1;
+					c.innerHTML = trClicks-1;
+					d.innerHTML = brClicks-1;
+					
+					var canvas = document.getElementById("canvas");
+					var ctx = canvas.getContext("2d");
+					/*ctx.clearRect(0, 0, canvas.width, canvas.height);
+					
+					ctx.strokeStyle = "#FF0000";
+					ctx.strokeRect(canvas.width/2-(canvas.width/3)/2, canvas.height/2-(canvas.height/3)/2, canvas.width/3, canvas.height/3);
+					
+					ctx.font = "30px Franklin Gothic";
+					ctx.strokeStyle = "#2C9DA3";
+					ctx.textAlign = "center";
+					ctx.strokeText("GOAL",canvas.width/2,canvas.height/2);
+					*/
+					
+					/*var img = document.getElementById("tl");
+					width = w;
+					height = h;
+					ctx.drawImage(img, width, height);
+					
+					var img2 = document.getElementById("tr");
+					width = window.innerWidth-img2.clientWidth+w;
+					height = h;
+					ctx.drawImage(img2, width, height);
+					
+					var img3 = document.getElementById("bl");
+					width = w;
+					height = window.innerHeight-img3.clientHeight+h;
+					ctx.drawImage(img3, width, height);
+					
+					var img4 = document.getElementById("br");
+					width = window.innerWidth-img4.clientWidth+w;
+					height = window.innerHeight-img4.clientHeight+h;
+					ctx.drawImage(img4, width, height);
+					*/
+					
+					ctx.strokeStyle = "#2C9DA3";
+					ctx.beginPath();
+					ctx.moveTo(0, window.innerHeight/2);
+					ctx.lineTo(window.innerWidth, window.innerHeight/2);
+					ctx.stroke();
+					
+					ctx.beginPath();
+					ctx.moveTo(window.innerWidth/2, 0);
+					ctx.lineTo(window.innerWidth/2, window.innerHeight);
+					ctx.stroke();
+					
+				}
+				function adjustPics() {
+					var totalClicks = tlClicks + blClicks + trClicks + brClicks;
+					var topClicks = tlClicks + trClicks;
+					var bottomClicks = blClicks + brClicks;
+					var rightClicks = trClicks + brClicks;
+					var leftClicks = tlClicks + blClicks;
+					var horizPercent = (leftClicks/totalClicks);
+					var vertPercent = (topClicks/totalClicks);
+					if (horizPercent == NaN || horizPercent == Infinity) horizPercent = 0;
+					if (vertPercent == NaN || vertPercent == Infinity) vertPercent = 0;
+					//console.log(leftClicks + ", " + totalClicks + ", " + horizPercent);
+					//console.log(topClicks + ", " + totalClicks + ", " + vertPercent);
+					if (horizPercent == 0 && vertPercent == 0) {
+						var img = document.getElementById("center");
+						document.getElementById("center").style["left"] = (horizPercent);
+						document.getElementById("center").style["right"] = (horizPercent);
+						document.getElementById("center").style["top"] = (vertPercent);
+						document.getElementById("center").style["bottom"] = (vertPercent);
+					} else {
+						var img = document.getElementById("center");
+						var wide = img.clientWidth;
+						var high = img.clientHeight;
+						document.getElementById("center").style["left"] = ((1-horizPercent)*window.innerWidth)-wide;
+						document.getElementById("center").style["right"] = ((horizPercent)*window.innerWidth)-wide;
+						document.getElementById("center").style["top"] = ((1-vertPercent)*window.innerHeight)-high;
+						document.getElementById("center").style["bottom"] = ((vertPercent)*window.innerHeight)-high;
+					}
+				}
+				
+				function reset() {
+					var leftPosition = parseFloat(document.getElementById("center").style["left"]);
+					var rightPosition = parseFloat(document.getElementById("center").style["right"]);
+					var topPosition = parseFloat(document.getElementById("center").style["top"]);
+					var bottomPosition = parseFloat(document.getElementById("center").style["bottom"]);
+					var wide = document.getElementById("center").clientWidth;
+					var high = document.getElementById("center").clientHeight;
+					var midLine = window.innerHeight/2-wide;
+					var centerLine = window.innerWidth/2-high;
+					//console.log(leftPosition + " " + rightPosition + " " + topPosition + " " + bottomPosition);
+					//console.log(midLine + " " + centerLine);
+					
+					if (leftPosition < centerLine && topPosition < midLine) {
+						document.getElementById("music").loop = false;
+						document.getElementById("music").src = "/horn.mp3";
+						document.getElementById("winner").innerHTML = "Top Left Wins!";
+						openNav2();
+						//alert("Top Left Wins!");
+					} else if (leftPosition > centerLine && topPosition < midLine) {
+						document.getElementById("music").loop = false;
+						document.getElementById("music").src = "/horn.mp3";
+						document.getElementById("winner").innerHTML = "Top Right Wins!";
+						openNav2();
+						//alert("Top Right Wins!");
+					} else if (leftPosition < centerLine && topPosition > midLine) {
+						document.getElementById("music").loop = false;
+						document.getElementById("music").src = "/horn.mp3";
+						document.getElementById("winner").innerHTML = "Bottom Left Wins!";
+						openNav2();
+						//alert("Bottom Left Wins!");
+					} else if (leftPosition > centerLine && topPosition > midLine) {
+						document.getElementById("music").loop = false;
+						document.getElementById("music").src = "/horn.mp3";
+						document.getElementById("winner").innerHTML = "Bottom Right Wins!";
+						openNav2();
+						//alert("Bottom Right Wins!");
+					} else {
+						document.getElementById("music").loop = false;
+						document.getElementById("music").src = "/horn.mp3";
+						document.getElementById("winner").innerHTML = "TIE :P";
+						openNav2();
+						//alert("TIE");
+					}
+					w = 1;
+					h = 1;
+					i = 1;
+					j = 1;
+					tlClicks = 1; 
+					trClicks = 1;
+					blClicks = 1;
+					brClicks = 1;
+					adjustPics();
+				}
+				
+				(window.onload = function() {
+					tlClicks = 1; 
+					trClicks = 1;
+					blClicks = 1;
+					brClicks = 1;
+					i = 1; // increment center right and left
+					j = 1;	// increment center up and down
+					w = 1; // width offset
+					h = 1; // height offset
+					incH = 10; // vertical movement offset
+					incW = (incH * window.innerWidth)/(window.innerHeight); // horizontal movement offset
+					
+					var canvas = document.getElementById('canvas'),
+						context = canvas.getContext('2d');
+
+					// resize the canvas to fill browser window dynamically
+					window.addEventListener('resize', resizeCanvas, false);
+
+					function resizeCanvas() {
+							canvas.width = window.innerWidth;
+							canvas.height = window.innerHeight;
+
+							/**
+							 * Your drawings need to be inside this function otherwise they will be reset when 
+							 * you resize the browser window and the canvas goes will be cleared.
+							 */
+							//redrawImages();
+						adjustPics();
+					}
+					resizeCanvas();
+					
+				})();
+				
+				function uploadImage() {
+					closeNav();
+				}
+				function uploadImage2() {
+					closeNav2();
+				}
+				
+		 	</script>
      </body>
 </html>

@@ -148,7 +148,7 @@
 			  <div style="color: #FFFFFF" class="overlay-content"><img src="/clickwars.png">
 				<p style="color: #2C9DA3">Music: www.bensound.com</p>
 				<a href="#" onclick="closeNav()">Play</a>
-				<a href="#" onclick="uploadImage()">Upload Image</a>
+				<a href="#" onclick="uploadImage(true)">Upload Image</a>
 			  </div>
 			</div>
 		 
@@ -158,12 +158,15 @@
 				  <h1 id="winner" style="color: #2C9DA3"></h1>
 				  <img src="/clickwars.png">
 				<a href="#" onclick="closeNav2()">Play Again</a>
-				<a href="#" onclick="uploadImage2()">Upload Image</a>
+				<a href="#" onclick="uploadImage(false)">Upload Image</a>
 			  </div>
 			</div>
 		 
+		 	<input id="image" style="display: none;" type="file" accept="image/*" onchange="imageSelected(event)">
+		 
 		 	<script>
 				var interval = 0;
+				var interval2 = 0;
 				window.onload = openNav();
 				function openNav() {
 					document.getElementById("myNav").style.height = "100%";
@@ -172,6 +175,7 @@
 				function openNav2() {
 					document.getElementById("myNav2").style.height = "100%";
 					clearInterval(interval);
+					clearInterval(interval2);
 				}
 				
 				function closeNav2() {
@@ -190,6 +194,7 @@
 					adjustPics();
 					interval = setInterval(reset, 60000);
 					setInterval(redrawImages, 1);
+					interval2 = setInterval(getClickTotals, 500);
 				}
 
 				function closeNav() {
@@ -199,6 +204,7 @@
 					document.getElementById("music").src = "/funky.mp3";
 					interval = setInterval(reset, 60000);
 					setInterval(redrawImages, 1);
+					interval2 = setInterval(getClickTotals, 500);
 				}
 				
 				canvas.onselectstart = function () { return false; }
@@ -293,6 +299,7 @@
 					b.innerHTML = blClicks-1;
 					c.innerHTML = trClicks-1;
 					d.innerHTML = brClicks-1;
+					adjustPics();
 					
 					var canvas = document.getElementById("canvas");
 					var ctx = canvas.getContext("2d");
@@ -367,6 +374,27 @@
 						document.getElementById("center").style["top"] = ((1-vertPercent)*window.innerHeight)-high;
 						document.getElementById("center").style["bottom"] = ((vertPercent)*window.innerHeight)-high;
 					}
+				}
+				
+				// Roy
+				function getClickTotals() {
+					// sample HTTP request
+					var request = new XMLHttpRequest();
+					request.onreadystatechange = function() {
+						if (request.readyState === 4) {
+							if (request.status === 200) {
+								document.body.className = 'ok';
+								//console.log(request.responseText);
+							} else {
+								document.body.className = 'error';
+							}
+						}
+					};
+					// insert url of server below
+					request.open("GET", "https://httpbin.org/ip", true);
+					request.send(null);
+					// parse the HTTP request
+					// update trClicks, tlClicks, blClicks, and brClicks
 				}
 				
 				function reset() {
@@ -456,11 +484,68 @@
 					
 				})();
 				
-				function uploadImage() {
-					closeNav();
+				var navG = 0;
+				function uploadImage(nav1) {
+					// open file select to allow image upload
+					navG = nav1;
+					var upload = document.getElementById("image");
+					upload.click();
 				}
-				function uploadImage2() {
-					closeNav2();
+				
+				function blobToDataURL(blob, callback) {
+					var a = new FileReader();
+					a.onload = function(e) {callback(e.target.result);}
+					a.readAsDataURL(blob);
+				}
+				
+				function imageSelected(event) {
+					var upload = document.getElementById("image");
+					//var file = new File(upload);
+					if (upload.value.indexOf(".jpg") > -1 ||
+					   upload.value.indexOf(".png") > -1 || 
+					   upload.value.indexOf(".bmp") > -1 ||
+					   upload.value.indexOf(".gif") > -1) {
+						//console.log("image valid");
+						var reader = new FileReader();
+						var output = 0;
+						reader.onload = function(){
+						  output = document.getElementById('tl');
+						  output.src = reader.result;
+						  output = document.getElementById('tr');
+						  output.src = reader.result;
+						  output = document.getElementById('bl');
+						  output.src = reader.result;
+						  output = document.getElementById('br');
+						  output.src = reader.result;
+						};
+						reader.readAsDataURL(event.target.files[0]);
+						blobToDataURL(event.target.files[0], function(dataurl) {
+							//console.log(dataurl);
+							visualRecognizer(dataurl, event.target.files[0]);
+						})
+						
+						// do not remove
+						if (!navG) {
+							closeNav2();
+						} else {
+							closeNav();
+						}
+					}
+					else {
+						alert("Invalid File!");
+					}
+				}
+				
+				// Pedro
+				function visualRecognizer(dataURL, blob) {
+					// blob file
+					console.log(blob);
+					// image url
+					console.log(dataURL);
+					
+					// run image through the visual recognizer
+					// provide feedback about image
+					
 				}
 				
 		 	</script>

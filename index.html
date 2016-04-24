@@ -1,7 +1,6 @@
 <html>
 	<head>
 		<title>Click Wars</title>
-		<meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
 		<style>
 			* { margin:0; padding:0; }
 			html, body { width:100%; height:100%; }
@@ -164,6 +163,7 @@
 			</div>
 		 
 		 	<input id="image" style="display: none;" type="file" accept="image/*" onchange="imageSelected(event)">
+		 	<meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
 		 
 		 	<script>
 				var interval = 0;
@@ -261,6 +261,9 @@
 				}
 				function bottomRight() { // All Negative
 					brClicks++;
+					
+					
+					
 					//console.log(brClicks);
 					adjustPics();
 						i = i+incW;
@@ -375,12 +378,6 @@
 						document.getElementById("center").style["top"] = ((1-vertPercent)*window.innerHeight)-high;
 						document.getElementById("center").style["bottom"] = ((vertPercent)*window.innerHeight)-high;
 					}
-                    /*var center = document.getElementById("center");
-                    var leftPosition = parseFloat(document.getElementById("center").style["left"]);
-					var rightPosition = parseFloat(document.getElementById("center").style["right"]);
-					var topPosition = parseFloat(document.getElementById("center").style["top"]);
-					var bottomPosition = parseFloat(document.getElementById("center").style["bottom"]);    
-                    */
 				}
 				
 				// Roy
@@ -391,15 +388,17 @@
 						if (request.readyState === 4) {
 							if (request.status === 200) {
 								document.body.className = 'ok';
-								//console.log(request.responseText);
+								console.log(request.responseText);
 							} else {
 								document.body.className = 'error';
 							}
 						}
 					};
 					// insert url of server below
-					request.open("GET", "https://httpbin.org/ip", true);
-					request.send(null);
+					
+					// use post requests
+					request.open("POST", "https://httpbin.org/post", true);
+					request.send("requestClicks");
 					// parse the HTTP request
 					// update trClicks, tlClicks, blClicks, and brClicks
 				}
@@ -509,6 +508,8 @@
 					var upload = document.getElementById("image");
 					//var file = new File(upload);
 					if (upload.value.indexOf(".jpg") > -1 ||
+						upload.value.indexOf(".tiff") > -1 ||
+						upload.value.indexOf(".jpeg") > -1 ||
 					   upload.value.indexOf(".png") > -1 || 
 					   upload.value.indexOf(".bmp") > -1 ||
 					   upload.value.indexOf(".gif") > -1) {
